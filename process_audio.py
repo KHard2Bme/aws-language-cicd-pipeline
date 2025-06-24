@@ -1,6 +1,7 @@
 import os
 import boto3
 import time
+import requests
 from pathlib import Path
 
 # Load environment variables from GitHub Secrets
