@@ -1,6 +1,7 @@
 import os
 import boto3
 import time
+import requests
 from pathlib import Path
 
 # Load environment variables from GitHub Secrets
@@ -68,7 +69,17 @@ def process_file(filepath):
     s3.upload_file(filepath, BUCKET, f"{PREFIX}audio_inputs/{filename}")
     
     transcript_uri = transcribe_audio(filename)
-    transcript_text = requests.get(transcript_uri).json()['results']['transcripts'][0]['transcript']
+   
+    response = requests.get(transcript_uri)
+
+if response.status_code != 200:
+    raise Exception(f"Failed to fetch transcript: {response.status_code}, {response.text}")
+
+try:
+    json_data = response.json()
+    transcript_text = json_data['results']['transcripts'][0]['transcript']
+except Exception as e:
+    raise Exception(f"Could not parse transcript JSON. Raw content: {response.text[:200]}...") from e  
     
     translated_text = translate_text(transcript_text, TARGET_LANG)
 
