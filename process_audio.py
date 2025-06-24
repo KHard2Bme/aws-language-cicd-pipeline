@@ -44,13 +44,11 @@ def translate_text(text, target_lang):
     return result['TranslatedText']
 
 def synthesize_speech(text, lang_code, output_path):
- # Map language codes to Polly voice IDs
     voice_map = {
         'es': 'Lupe',
         'en': 'Joanna',
-        'zh': 'Zhiyu',        
+        'zh': 'Zhiyu',
         'hi': 'Kajal',
-        
     }
 
     voice_id = voice_map.get(lang_code, 'Joanna')  # Default to 'Joanna' if not found
@@ -71,16 +69,15 @@ def process_file(filepath):
     transcript_uri = transcribe_audio(filename)
     response = requests.get(transcript_uri)
 
-if response.status_code != 200:
-    raise Exception(f"Failed to fetch transcript: {response.status_code}, {response.text}")
+    if response.status_code != 200:
+        raise Exception(f"Failed to fetch transcript: {response.status_code}, {response.text}")
 
-try:
-    json_data = response.json()
-    transcript_text = json_data['results']['transcripts'][0]['transcript']
-except Exception as e:
-    raise Exception(f"Could not parse transcript JSON. Raw content: {response.text[:200]}...") from e
+    try:
+        json_data = response.json()
+        transcript_text = json_data['results']['transcripts'][0]['transcript']
+    except Exception as e:
+        raise Exception(f"Could not parse transcript JSON. Raw content: {response.text[:200]}...") from e
 
-    
     translated_text = translate_text(transcript_text, TARGET_LANG)
 
     transcript_path = f"transcripts/{filename}.txt"
@@ -103,4 +100,5 @@ except Exception as e:
 # Loop through all .mp3 files in audio_inputs
 for file in Path("audio_inputs").glob("*.mp3"):
     process_file(str(file))
+
 
