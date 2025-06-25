@@ -8,7 +8,7 @@ from pathlib import Path
 AWS_REGION = os.environ['AWS_REGION']
 BUCKET = os.environ['S3_BUCKET']
 PREFIX = os.environ.get('S3_PREFIX', 'beta/')  # Default to beta unless overridden
-TARGET_LANG = os.environ.get('TARGET_LANG', 'zh')  # Default to Spanish
+TARGET_LANG = os.environ.get('TARGET_LANG', 'es')  # Default to Spanish
 
 # Initialize AWS clients
 s3 = boto3.client('s3', region_name=AWS_REGION)
